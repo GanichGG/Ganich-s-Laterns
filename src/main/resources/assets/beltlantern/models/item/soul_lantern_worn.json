@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_lantern",
+  "textures": { "lantern": "minecraft:block/soul_lantern" },
+  "display": {
+    "fixed": { "rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [1, 1, 1] }
+  }
+}

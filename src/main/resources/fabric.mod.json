@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "beltlantern",
+	"version": "${version}",
+	"name": "Ganich's Lanterns",
+	"description": "Wear a lantern on your hip in its own slot: free hands, a lantern that really swings, and dynamic light.",
+	"authors": [
+		"GanichGG"
+	],
+	"contact": {
+		"sources": "https://github.com/GanichGG/Ganich-s-Laterns",
+		"issues": "https://github.com/GanichGG/Ganich-s-Laterns/issues"
+	},
+	"license": "Apache-2.0",
+	"icon": "assets/beltlantern/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.beltlantern.BeltLantern"
+		],
+		"client": [
+			"com.beltlantern.client.BeltLanternClient"
+		],
+		"lambdynlights:initializer": [
+			"com.beltlantern.client.compat.BeltLanternDynamicLights"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.16.0",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*",
+		"trinkets": ">=3.10.0"
+	},
+	"recommends": {
+		"lambdynlights": ">=4.8.0"
+	}
+}

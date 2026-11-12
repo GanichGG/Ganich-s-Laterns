@@ -1,0 +1,5 @@
+{
+  "icon": "beltlantern:gui/slots/lantern",
+  "order": -900,
+  "validator_predicates": ["trinkets:tag"]
+}

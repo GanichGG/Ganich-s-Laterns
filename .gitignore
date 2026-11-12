@@ -1,0 +1,12 @@
+.gradle/
+build/
+run/
+.idea/
+*.iml
+*.log
+# local-only material
+blender/
+branding/
+dev-libs/
+src/devskin/
+MODRINTH.md

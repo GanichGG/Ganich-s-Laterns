@@ -1,0 +1,27 @@
+{
+  "_comment": "Defaults for every worn lantern. A resource pack may override this file and/or pose/<item>.json (e.g. pose/lantern.json, pose/soul_lantern.json). Only the fields you list are changed; the files of all packs are merged.",
+
+  "hook": [3.7, 9.0, 2.0],
+  "scale": 0.6,
+  "model_top_px": 11.0,
+
+  "physics": true,
+  "length": 0.30,
+  "stiffness": 75.0,
+  "damping": 5.5,
+  "accel_gain": 0.25,
+  "gait_roll": 18.0,
+  "gait_pitch": 12.0,
+  "idle_sway": 2.5,
+
+  "rest_roll": -0.12,
+  "min_pitch": -0.05,
+  "max_pitch": 0.65,
+  "min_roll": -0.65,
+  "max_roll": 0.30,
+
+  "hurt_kick": 3.0,
+  "land_kick": 1.5,
+  "sneak_kick": 1.2,
+  "swing_kick": 0.8
+}

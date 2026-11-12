@@ -1,0 +1,89 @@
+plugins {
+	id 'fabric-loom' version "${loom_version}"
+	id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	// Trinkets
+	maven { url = 'https://maven.terraformersmc.com/' }
+	// Cardinal Components (Trinkets dependency)
+	maven { url = 'https://maven.ladysnake.org/releases' }
+	// LambDynamicLights (via Modrinth maven)
+	maven {
+		url = 'https://api.modrinth.com/maven'
+		content { includeGroup 'maven.modrinth' }
+	}
+}
+
+// Dev-only helper mod (src/devskin): gives the dev client player a fixed skin. Not part of the released jar.
+sourceSets {
+	devskin {
+		compileClasspath += sourceSets.main.compileClasspath
+		runtimeClasspath += sourceSets.main.runtimeClasspath
+	}
+}
+
+loom {
+	mods {
+		"beltlantern-devskin" {
+			sourceSet sourceSets.devskin
+		}
+	}
+	runs {
+		client {
+			// Must match NICK in DevSkin
+			programArgs "--username", "Player575"
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// Separate belt slot
+	modImplementation "dev.emi:trinkets:${project.trinkets_version}"
+
+	// Dynamic light (optional at runtime, see fabric.mod.json "recommends").
+	// The API artifact is not published to any reachable maven: it is nested twice inside the Modrinth jar,
+	// so it is vendored in libs/ for compiling, while the full mod is only added to the dev runtime.
+	modCompileOnly files("libs/lambdynamiclights-api-${project.lambdynlights_version}.jar")
+	// Dev runtime needs the wrapper plus the real "lambdynlights_runtime" module that is nested inside it
+	// (Loom does not unpack double-nested jars).
+	modLocalRuntime "maven.modrinth:lambdynamiclights:${project.lambdynlights_version}"
+	// ...and its own nested libraries (api, spruceui, pridelib, yumi-*), all extracted into dev-libs/.
+	modLocalRuntime fileTree(dir: 'dev-libs', include: '*.jar')
+
+	// Dev-only helper mod (skin)
+	runtimeOnly sourceSets.devskin.output
+
+	// Dev-only: Detailed Animations resource pack (run/resourcepacks) needs these two mods.
+	modLocalRuntime "maven.modrinth:entity-model-features:${project.emf_version}"
+	modLocalRuntime "maven.modrinth:entitytexturefeatures:${project.etf_version}"
+}
+
+processResources {
+	inputs.property "version", project.version
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
