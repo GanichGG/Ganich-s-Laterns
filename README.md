@@ -1,53 +1,62 @@
 # Ganich's Lanterns (Fabric 1.21.1)
 
-Ванильный фонарь (и фонарь душ) можно носить в отдельном слоте Trinkets `legs/lantern`:
-руки свободны, фонарь качается и даёт динамический свет (LambDynamicLights).
+Wear a vanilla lantern or soul lantern in its own Trinkets slot `legs/lantern`:
+your hands stay free, the lantern swings as you move and gives off dynamic light (LambDynamicLights).
 
-- **Слот**: `src/main/resources/data/trinkets` (слот, привязка к игроку, тег подходящих предметов).
-- **Надевание**: перетащить фонарь в слот на экране Trinkets (ПКМ в воздух тоже должен работать).
-- **Рендер**: `client/BeltLanternRenderer` (маятник на крючке, привязан к телу модели игрока).
-- **Свет**: `client/compat/BeltLanternDynamicLights`.
+- **Slot**: `src/main/resources/data/trinkets` (the slot, its assignment to players, the item tag of allowed items).
+- **Equipping**: drag a lantern into the slot on the Trinkets screen.
+- **Rendering**: `client/BeltLanternRenderer`, a pendulum on a hook attached to the player model's torso.
+- **Light**: `client/compat/BeltLanternDynamicLights`.
 
-## Физика
+## Requirements
 
-Фонарь реагирует на: разгон/торможение, повороты (крючок не на оси, его "раскручивает"), прыжок и падение
-(меняется эффективная гравитация), приземление, удар по игроку, взмах руки,
-приседание, ритм шагов. Фонарь прибит к крючку: он только качается, вверх-вниз не прыгает. В покое слегка дышит. Углы ограничены, чтобы он упирался в тело, а не проходил сквозь него.
+- Fabric Loader, Fabric API
+- [Trinkets](https://modrinth.com/mod/trinkets)
+- Recommended: [LambDynamicLights](https://modrinth.com/mod/lambdynamiclights) (without it the lantern is still shown and swings, but gives no dynamic light)
 
-## Ресурспаки
+Install on both the client and the server: the slot lives on the server, rendering and light are client side.
 
-Всё настраивается из ресурспака, ничего перекомпилировать не надо:
+## Physics
 
-| Файл в паке | Что меняет |
+The lantern reacts to acceleration and braking, turns (the hook is off the turning axis, so a turn whips it around),
+jumps and falls (the effective gravity changes), landing, being hit, swinging an arm, sneaking and the walking rhythm.
+It is nailed to its hook: it only swings and never moves up or down. It sways gently when you stand still.
+Angles are limited so it rests against the body instead of passing through it.
+
+## Resource packs
+
+Everything can be changed from a resource pack, no recompiling needed:
+
+| File in the pack | What it changes |
 | --- | --- |
-| `assets/beltlantern/pose/default.json` | положение (`hook`), размер, физика, лимиты для всех фонарей |
-| `assets/beltlantern/pose/lantern.json`, `soul_lantern.json` | то же, но для одного предмета |
-| `assets/beltlantern/models/item/lantern_worn.json`, `soul_lantern_worn.json` | 3D-модель на поясе (можно заменить целиком, `model_top_px` задаёт высоту крепления) |
-| `assets/minecraft/textures/block/lantern.png` | текстура, подхватывается как у обычного блока |
+| `assets/beltlantern/pose/default.json` | placement (`hook`), size, physics and limits for all lanterns |
+| `assets/beltlantern/pose/lantern.json`, `soul_lantern.json` | the same, for a single lantern |
+| `assets/beltlantern/models/item/lantern_worn.json`, `soul_lantern_worn.json` | the 3D model on the hip (can be replaced completely, `model_top_px` sets the attachment height) |
+| `assets/minecraft/textures/block/lantern.png` | the texture, picked up like for the normal block |
 
-Файлы всех паков склеиваются по полям (верхний пак перекрывает нижний), достаточно указать только нужные поля.
-Полный список полей и значения по умолчанию: `src/main/resources/assets/beltlantern/pose/default.json`.
-`"physics": false` делает фонарь жёстким (без качания).
+The files of all packs are merged field by field (the higher pack overrides the lower one), so you only need to list
+the fields you want to change. The full list of fields and their defaults:
+`src/main/resources/assets/beltlantern/pose/default.json`. `"physics": false` makes the lantern rigid (no swinging).
 
-Анимационные моды и паки, которые меняют позу торса игрока, учитываются автоматически: фонарь цепляется к
-части модели `body` уже после её позирования.
+Animation mods and packs that change the player's torso pose are followed automatically: the lantern is attached to
+the `body` model part after it has been posed.
 
-## Запуск
+## Building and running
 
 ```bash
+JAVA_HOME=<jdk 21> ./gradlew build     # jar in build/libs
 JAVA_HOME=<jdk 21> ./gradlew runClient
-JAVA_HOME=<jdk 21> ./gradlew build     # jar в build/libs
 ```
 
-`libs/lambdynamiclights-api-*.jar` (LGPL) лежит в репозитории: API LambDynamicLights нигде не опубликован отдельно,
-он вложен в jar с Modrinth, а для компиляции он нужен.
+`libs/lambdynamiclights-api-*.jar` (LGPL) is kept in the repository: the LambDynamicLights API is not published to any
+maven on its own, it is nested inside the jar from Modrinth, and it is needed to compile.
 
-Для `runClient` с динамическим светом положи в `dev-libs/` jar-ы из вложенных jar-ов LambDynamicLights
-(`lambdynamiclights-runtime`, `spruceui`, `pridelib`, `yumi-*`), папка в git не хранится. Без них клиент запустится
-только если убрать LambDynamicLights из зависимостей.
+For `runClient` with dynamic light, put the jars nested inside the LambDynamicLights jar into `dev-libs/`
+(`lambdynamiclights-runtime`, `spruceui`, `pridelib`, `yumi-*`). That folder is not stored in git. Without them the
+client only starts if you remove LambDynamicLights from the dependencies in `build.gradle`.
 
-## Лицензия
+## License
 
-Код: Apache License 2.0 (файл `LICENSE`).
-Иконка мода (`assets/beltlantern/icon.png`) нарисована по текстуре фонаря из пака Bare Bones (RobotPants,
-All Rights Reserved) и лицензией этого репозитория не покрывается.
+Code: Apache License 2.0 (file `LICENSE`).
+The mod icon (`assets/beltlantern/icon.png`) is drawn from the lantern texture of the Bare Bones resource pack
+(RobotPants, All Rights Reserved) and is not covered by this repository's license.
